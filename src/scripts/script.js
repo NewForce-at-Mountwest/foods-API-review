@@ -21,35 +21,13 @@
 //         })
 //     })
 
-    fetch("http://localhost:8088/food")
-    .then(response => response.json())
+   apiManager.getAllFoods()
     .then(myParsedFoods => {
         myParsedFoods.forEach(food => {
-            console.log(food) // Should have a `barcode` property
-
             // Now fetch the food from the Food API
-            fetch(`https://world.openfoodfacts.org/api/v0/product/${food.barcode}.json`)
-                .then(response => response.json())
+            apiManager.getIngredientsForSingleFood(food)
                 .then(productInfo => {
-                    debugger
-                    if (productInfo.product.ingredients_text) {
-                      food.ingredients = productInfo.product.ingredients_text
-                    } else {
-                      food.ingredients = "no ingredients listed"
-                    }
-
-                    // Build HTML string for individual food
-                    const  htmlString = `<div class="flex">
-                    <h3>${food.name}</h3>
-                    <p>${food.category}</p>
-                    <p>${food.ethnicity}</p>
-                    <p>${food.ingredients}</p>
-                    </div>
-                    `
-                    // Add HTML string to DOM
-
-                        document.querySelector("#container").innerHTML += htmlString
-
+                   domPrinter.printSingleFood(food, productInfo)
                 })
         })
     })
